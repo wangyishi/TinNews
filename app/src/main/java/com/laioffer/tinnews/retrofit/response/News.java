@@ -2,7 +2,7 @@ package com.laioffer.tinnews.retrofit.response;
 
 import android.support.annotation.NonNull;
 
-
+import com.google.gson.annotations.SerializedName;
 
 public class News {
     public String author;
@@ -10,13 +10,14 @@ public class News {
     public String title;
     public String description;
     public String url;
+    @SerializedName("urlToImage")  //add serializedAnnotation
     public String image;
+    @SerializedName("publishedAt")  //add serializedAnnotation
     public String time;
 
     public News() {
 
     }
-
 
     public String getAuthor() {
         return author;
@@ -43,3 +44,5 @@ public class News {
         return time;
     }
 }
+
+

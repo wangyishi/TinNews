@@ -1,6 +1,5 @@
 package com.laioffer.tinnews.tin;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,14 +8,22 @@ import android.view.ViewGroup;
 
 import com.laioffer.tinnews.R;
 import com.laioffer.tinnews.common.TinBasicFragment;
+import com.laioffer.tinnews.retrofit.NewsRequestApi;
+import com.laioffer.tinnews.retrofit.RetrofitClient;
 import com.laioffer.tinnews.retrofit.response.News;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class TinGalleryFragment extends TinBasicFragment implements TinNewsCard.OnSwipeListener {
+
     private SwipePlaceHolderView mSwipeView;
 
     public static TinGalleryFragment newInstance() {
@@ -27,7 +34,6 @@ public class TinGalleryFragment extends TinBasicFragment implements TinNewsCard.
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,21 +65,30 @@ public class TinGalleryFragment extends TinBasicFragment implements TinNewsCard.
             }
         });
 
-        for (int i = 0; i < 10; i++) {
-            News news = new News();
-            news.image = "https://i.ytimg.com/vi/BgIJ45HKDpw/maxresdefault.jpg";
-            news.description = "Test description";
-            news.title = "Test title";
-            news.author = "Test author";
+        getDate();
+
+        return view;
+    }
+
+    private void getDate() {
+        RetrofitClient.getInstance().create(NewsRequestApi.class).getNewsByCountry("us")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(baseResponse -> baseResponse != null && baseResponse.articles != null)
+                .subscribe(baseResponse -> {
+                    showNewsCard(baseResponse.articles);
+                });
+    }
+
+    private void showNewsCard(List<News> newsList) {
+        for (News news : newsList) {
             TinNewsCard tinNewsCard = new TinNewsCard(news, mSwipeView, this);
             mSwipeView.addView(tinNewsCard);
         }
-            return view;
-
     }
 
+    @Override
     public void onLike(News news) {
 
     }
-
 }
