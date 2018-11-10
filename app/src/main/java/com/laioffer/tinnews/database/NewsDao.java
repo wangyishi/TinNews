@@ -15,7 +15,6 @@ public interface NewsDao {
     @Insert
     void insertNews(News news);
 
-    //3.1
     @Query("SELECT * FROM news")
     Flowable<List<News>> getAll();
 }

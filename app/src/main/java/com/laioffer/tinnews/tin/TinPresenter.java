@@ -31,7 +31,6 @@ public class TinPresenter implements TinContract.Presenter {
     public void onViewAttached(TinContract.View view) {
         //hold the reference
         this.view = view;
-        //5.7 start to fetchData
         this.model.fetchData();
     }
 
